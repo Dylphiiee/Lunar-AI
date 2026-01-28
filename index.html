@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lunar AI - Asisten Komunitas</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="animated-bg">
+        <div class="bg-particle particle-1"></div>
+        <div class="bg-particle particle-2"></div>
+        <div class="bg-particle particle-3"></div>
+        <div class="bg-particle particle-4"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo-section">
+                <div class="logo-glow">
+                    <i class="fas fa-moon"></i>
+                </div>
+                <h1 class="main-title">LUNAR-AI</h1>
+            </div>
+            
+            <div class="header-controls">
+                <button class="new-chat-btn" id="newChatBtn" title="New Chat">
+                    <i class="fas fa-plus"></i>
+                    <span>New Chat</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- AI Type Selection Menu -->
+        <div class="ai-type-menu" id="aiTypeMenu">
+            <div class="menu-header">
+                <h3><i class="fas fa-robot"></i> Pilih Tipe AI</h3>
+                <button class="close-menu" id="closeMenu">&times;</button>
+            </div>
+            <div class="menu-options">
+                <button class="ai-option active" data-type="community">
+                    <div class="option-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="option-info">
+                        <h4>Lunar AI Community</h4>
+                        <p>Asisten resmi informasi Lunar Community</p>
+                    </div>
+                </button>
+                
+                <button class="ai-option" data-type="chat">
+                    <div class="option-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <div class="option-info">
+                        <h4>Lunar AI Chat</h4>
+                        <p>Asisten teknologi dan pengembangan</p>
+                    </div>
+                </button>
+                
+                <div class="commands-section">
+                    <h4><i class="fas fa-terminal"></i> Perintah</h4>
+                    <button class="command-btn" data-command="stalk-roblox">
+                        <i class="fas fa-search"></i>
+                        Stalk Roblox
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Welcome Section -->
+        <section class="welcome-section">
+            <div class="welcome-content">
+                <h2 class="subtitle" id="typewriterText"></h2>
+                <div class="welcome-info">
+                    <p>Pilih tipe AI dari menu kiri untuk mulai chatting!</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chat Container -->
+        <div class="chat-container" id="chatContainer">
+            <div class="messages-container" id="messagesContainer">
+                <!-- Messages akan ditambahkan secara dinamis -->
+            </div>
+            
+            <!-- Input Area -->
+            <div class="input-container">
+                <div class="input-wrapper">
+                    <div class="ai-toggle" id="aiToggle" title="Pilih Tipe AI">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    
+                    <div class="chat-input-wrapper">
+                        <textarea 
+                            id="messageInput" 
+                            placeholder="Ketik pesan Anda di sini..."
+                            rows="1"
+                            spellcheck="true"
+                        ></textarea>
+                        
+                        <div class="input-controls">
+                            <button class="send-btn" id="sendBtn" title="Kirim pesan">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="input-footer">
+                    <span class="ai-info" id="currentAI">Lunar AI Community</span>
+                    <span class="character-count" id="charCount">0/2000</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Roblox Stalker Modal -->
+        <div class="modal-overlay" id="robloxModal">
+            <div class="modal-content blur-modal">
+                <div class="modal-header">
+                    <h3><i class="fas fa-search"></i> Stalk Roblox Player</h3>
+                    <button class="close-modal" id="closeRobloxModal">&times;</button>
+                </div>
+                
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="robloxUsername">
+                            <i class="fas fa-user"></i>
+                            Username Roblox
+                        </label>
+                        <input 
+                            type="text" 
+                            id="robloxUsername" 
+                            placeholder="Masukkan username Roblox..."
+                            autocomplete="off"
+                        >
+                    </div>
+                    
+                    <div class="modal-actions">
+                        <button class="btn-secondary" id="cancelStalk">
+                            Batal
+                        </button>
+                        <button class="btn-primary" id="stalkBtn">
+                            <i class="fas fa-search"></i>
+                            Stalk Player
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <p><i class="fas fa-info-circle"></i> Fitur ini mengambil informasi publik pemain Roblox</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="thinking-dots">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+            <p class="thinking-text">Lunar AI sedang berpikir...</p>
+        </div>
+    </div>
+
+    <!-- Script -->
+    <script src="script.js"></script>
+</body>
+</html>
