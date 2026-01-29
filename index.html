@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUNAR-AI</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="css/style.css">
+    
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-left">
+                <div class="terminator-shape">
+                    <i class="fas fa-clock"></i>
+                    <span id="current-time">00:00:00</span>
+                </div>
+            </div>
+            
+            <div class="header-right">
+                <div class="circle-shape" id="new-chat-btn">
+                    <i class="fas fa-plus"></i>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="title-container" id="title-container">
+                <h1 class="main-title">LUNAR-AI</h1>
+                <h2 class="subtitle" id="typewriter-text">ada yang bisa dibantu?</h2>
+            </div>
+
+            <div class="chat-container" id="chat-container">
+            </div>
+
+            <div class="ai-menu-container" id="ai-menu-container">
+                <div class="ai-menu">
+                    <h3 class="ai-menu-title">Pilih Tipe AI</h3>
+                    <div class="ai-options">
+                        <div class="ai-option" data-ai-type="lunar-ai-community">
+                            <i class="fas fa-users"></i>
+                            <span>Lunar-AI Community</span>
+                        </div>
+                        <div class="ai-option" data-ai-type="lunar-ai-chat">
+                            <i class="fas fa-comments"></i>
+                            <span>Lunar-AI Chat</span>
+                        </div>
+                        <div class="ai-option" data-ai-type="stalk-roblox">
+                            <i class="fas fa-search"></i>
+                            <span>Stalk Roblox</span>
+                        </div>
+                    </div>
+                    <div class="ai-menu-close">
+                        <i class="fas fa-times"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="roblox-stalk-modal" id="roblox-stalk-modal">
+                <div class="roblox-stalk-content">
+                    <div class="roblox-stalk-header">
+                        <h2 class="roblox-stalk-title">Stalk Roblox</h2>
+                        <div class="close-modal" id="close-stalk-modal">
+                            <i class="fas fa-times"></i>
+                        </div>
+                    </div>
+                    <div class="roblox-stalk-body">
+                        <div class="input-group">
+                            <div class="terminator-shape input-terminator">
+                                <i class="fas fa-user"></i>
+                                <input type="text" id="roblox-username" placeholder="Masukkan username Roblox">
+                            </div>
+                        </div>
+                        <button class="stalk-btn" id="stalk-btn">
+                            <div class="terminator-shape">
+                                <span>Stalk</span>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="roblox-result-modal" id="roblox-result-modal">
+                <div class="roblox-result-content">
+                    <div class="roblox-result-header">
+                        <h2 class="roblox-result-title">Stalk Roblox</h2>
+                        <div class="close-modal" id="close-result-modal">
+                            <i class="fas fa-times"></i>
+                        </div>
+                    </div>
+                    <div class="roblox-result-body">
+                        <div class="profile-picture-container">
+                            <img id="roblox-avatar" src="" alt="Roblox Avatar">
+                        </div>
+                        <div class="profile-info">
+                            <div class="info-item">
+                                <span class="info-label">Username:</span>
+                                <span id="roblox-name" class="info-value"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Display Name:</span>
+                                <span id="roblox-displayname" class="info-value"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">ID:</span>
+                                <span id="roblox-id" class="info-value"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Created:</span>
+                                <span id="roblox-created" class="info-value"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Description:</span>
+                                <span id="roblox-description" class="info-value"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Status:</span>
+                                <span id="roblox-status" class="info-value"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Last Online:</span>
+                                <span id="roblox-lastonline" class="info-value"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-container">
+                <div class="input-expand-btn" id="input-expand-btn">
+                    <i class="fas fa-expand-alt"></i>
+                </div>
+                <div class="input-wrapper">
+                    <div class="circle-shape input-ai-toggle" id="ai-toggle-btn">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="text-input-container">
+                        <div class="text-input-wrapper">
+                            <textarea 
+                                id="message-input" 
+                                placeholder="Ketik pesan Anda di sini... (Shift+Enter untuk mengirim, Enter untuk baris baru)"
+                                rows="1"
+                            ></textarea>
+                            <div class="placeholder-text" id="input-placeholder">
+                                Ketik pesan Anda di sini... (Shift+Enter untuk mengirim, Enter untuk baris baru)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="circle-shape input-send-btn" id="send-btn">
+                        <i class="fas fa-arrow-up"></i>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
