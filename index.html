@@ -3,182 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LUNAR-AI</title>
+    <title>LUNAR-AI - Intelligent Assistant</title>
     
+    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts - Poppins & Orbitron -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
     
-    <link rel="stylesheet" href="css/style.css">
-    
+    <!-- Polyfill untuk fitur modern -->
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    
+    <!-- MathJax untuk LaTeX matematika -->
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <header class="header">
-            <div class="header-left">
-                <div class="terminator-shape">
-                    <i class="fas fa-clock"></i>
-                    <span id="current-time">00:00:00</span>
-                </div>
-            </div>
-            
-            <div class="header-right">
-                <div class="circle-shape" id="new-chat-btn" title="Chat Baru">
-                    <i class="fas fa-plus"></i>
-                </div>
-            </div>
-        </header>
-
-        <main class="main-content">
-            <div class="title-container" id="title-container">
-                <h1 class="main-title">LUNAR-AI</h1>
-                <h2 class="subtitle" id="typewriter-text"></h2>
-            </div>
-
-            <div class="chat-container" id="chat-container"></div>
-
-            <div class="ai-mode-container" id="ai-mode-container">
-                <div class="ai-mode-header">
-                    <h3><i class="fas fa-robot"></i> Pilih Mode AI</h3>
-                    <div class="close-mode" id="close-ai-mode"><i class="fas fa-times"></i></div>
-                </div>
-                <div class="ai-modes">
-                    <div class="ai-mode-card active" data-mode="lunar-ai-community">
-                        <div class="mode-icon">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <div class="mode-info">
-                            <h4>LUNAR-AI Community</h4>
-                            <p>Asisten resmi Lunar Community</p>
-                        </div>
-                        <div class="mode-badge">Utama</div>
-                    </div>
-                    
-                    <div class="ai-mode-card" data-mode="lunar-ai-chat">
-                        <div class="mode-icon">
-                            <i class="fas fa-comments"></i>
-                        </div>
-                        <div class="mode-info">
-                            <h4>LUNAR-AI Chat</h4>
-                            <p>Asisten moderator Dylphiiee</p>
-                        </div>
-                        <div class="mode-badge">Pro</div>
-                    </div>
-                    
-                    <div class="ai-mode-card" data-mode="stalk-roblox">
-                        <div class="mode-icon">
-                            <i class="fas fa-search"></i>
-                        </div>
-                        <div class="mode-info">
-                            <h4>Stalk Roblox</h4>
-                            <p>Cari informasi akun Roblox</p>
-                        </div>
-                        <div class="mode-badge tool">
-                            <i class="fas fa-wrench"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="modal-overlay" id="roblox-modal">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h2 class="modal-title">Stalk Roblox</h2>
-                        <div class="modal-close" id="close-roblox-modal"><i class="fas fa-times"></i></div>
-                    </div>
-                    <div class="modal-body">
-                        <div class="input-group stalk-input">
-                            <div class="input-with-icon">
-                                <i class="fas fa-user"></i>
-                                <input type="text" id="roblox-username" placeholder="Masukkan username Roblox" autocomplete="off">
-                            </div>
-                        </div>
-                        <button class="stalk-button" id="start-stalk-btn">
-                            <i class="fas fa-search"></i>
-                            <span>Stalk Sekarang</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="modal-overlay" id="roblox-result-modal">
-                <div class="modal-content result-modal">
-                    <div class="modal-header">
-                        <h2 class="modal-title">Hasil Stalking</h2>
-                        <div class="modal-close" id="close-result-modal"><i class="fas fa-times"></i></div>
-                    </div>
-                    <div class="modal-body result-body">
-                        <div class="profile-section">
-                            <div class="avatar-container">
-                                <img id="roblox-avatar" src="" alt="Avatar" class="roblox-avatar">
-                            </div>
-                            <div class="profile-details">
-                                <div class="detail-row">
-                                    <span class="detail-label">Username:</span>
-                                    <span id="roblox-username-result" class="detail-value">-</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">Display Name:</span>
-                                    <span id="roblox-displayname" class="detail-value">-</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">ID:</span>
-                                    <span id="roblox-id" class="detail-value">-</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">Dibuat:</span>
-                                    <span id="roblox-created" class="detail-value">-</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">Status:</span>
-                                    <span id="roblox-status" class="detail-value status-active">-</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">Terakhir Online:</span>
-                                    <span id="roblox-lastonline" class="detail-value">-</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">Deskripsi:</span>
-                                    <span id="roblox-description" class="detail-value">-</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="input-section">
-                <div class="input-tools">
-                    <div class="circle-shape tool-btn" id="toggle-ai-mode" title="Pilih Mode AI">
-                        <i class="fas fa-robot"></i>
-                    </div>
-                    <div class="circle-shape tool-btn" id="expand-input" title="Perbesar Input">
-                        <i class="fas fa-expand-alt"></i>
-                    </div>
-                </div>
-                
-                <div class="input-wrapper">
-                    <div class="text-input-container">
-                        <textarea 
-                            id="message-input" 
-                            placeholder="Apa yang anda ingin tahu? (Shift+Enter untuk mengirim, Enter untuk baris baru)"
-                            rows="1"
-                            autocomplete="off"
-                        ></textarea>
-                    </div>
-                    <div class="circle-shape send-btn" id="send-message-btn" title="Kirim Pesan">
-                        <i class="fas fa-arrow-up"></i>
-                    </div>
-                </div>
-            </div>
-        </main>
+    <!-- Header Bar -->
+    <div class="header">
+        <!-- Clock (Left) -->
+        <div class="clock-container">
+            <i class="far fa-clock"></i>
+            <span id="current-time">00:00</span>
+        </div>
+        
+        <!-- New Chat Button (Right) -->
+        <button class="new-chat-btn" id="newChatBtn" title="New Chat">
+            <i class="fas fa-plus"></i>
+        </button>
     </div>
 
-    <script src="js/script.js"></script>
+    <!-- Welcome Screen -->
+    <div class="welcome-screen" id="welcomeScreen">
+        <h1 class="title">LUNAR-AI</h1>
+        <p class="subtitle" id="subtitle"></p>
+    </div>
+
+    <!-- Chat Container -->
+    <div class="chat-container" id="chatContainer">
+        <div class="messages" id="messages"></div>
+    </div>
+
+    <!-- Input Container -->
+    <div class="input-container">
+        <!-- AI Type Menu Button -->
+        <button class="ai-menu-btn" id="aiMenuBtn" title="AI Options">
+            <i class="fas fa-robot"></i>
+        </button>
+
+        <!-- AI Type Menu -->
+        <div class="ai-menu" id="aiMenu">
+            <div class="menu-header">Pilih AI atau Perintah</div>
+            <button class="menu-item" data-ai="community">
+                <i class="fas fa-users"></i>
+                <span>Lunar-AI Community</span>
+            </button>
+            <button class="menu-item" data-ai="chat">
+                <i class="fas fa-comment-dots"></i>
+                <span>Lunar-AI Chat</span>
+            </button>
+            <button class="menu-item" data-command="stalk" id="stalkBtn">
+                <i class="fab fa-discord"></i>
+                <span>Stalk Roblox</span>
+            </button>
+        </div>
+
+        <!-- Input Wrapper -->
+        <div class="input-wrapper" id="inputWrapper">
+            <textarea 
+                id="userInput" 
+                placeholder="Ketik pesan Anda disini..." 
+                rows="1"
+            ></textarea>
+            <button class="expand-btn" id="expandBtn" title="Expand">
+                <i class="fas fa-expand"></i>
+            </button>
+        </div>
+
+        <!-- Send Button -->
+        <button class="send-btn" id="sendBtn" title="Send Message">
+            <i class="fas fa-arrow-up"></i>
+        </button>
+    </div>
+
+    <!-- Stalk Roblox Modal -->
+    <div class="modal" id="stalkModal">
+        <div class="modal-content stalk-form">
+            <button class="close-modal" id="closeStalkModal">
+                <i class="fas fa-times"></i>
+            </button>
+            <h2 class="modal-title">Stalk Roblox</h2>
+            <div class="input-group">
+                <i class="fas fa-user"></i>
+                <input 
+                    type="text" 
+                    id="robloxUsername" 
+                    placeholder="Masukkan username Roblox"
+                    autocomplete="off"
+                >
+            </div>
+            <button class="stalk-submit-btn" id="stalkSubmitBtn">
+                <span>Stalk</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Stalk Result Modal -->
+    <div class="modal" id="stalkResultModal">
+        <div class="modal-content stalk-result">
+            <button class="close-modal" id="closeResultModal">
+                <i class="fas fa-times"></i>
+            </button>
+            <h2 class="modal-title">Stalk Roblox</h2>
+            <div id="stalkResultContent"></div>
+        </div>
+    </div>
+
+    <!-- Expanded Input Modal -->
+    <div class="modal" id="expandedModal">
+        <div class="modal-content expanded-input">
+            <div class="expanded-header">
+                <h3>Tulis Pesan</h3>
+                <button class="close-modal" id="closeExpandedModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <textarea 
+                id="expandedInput" 
+                placeholder="Ketik pesan Anda disini..."
+            ></textarea>
+            <button class="expanded-send-btn" id="expandedSendBtn">
+                <i class="fas fa-paper-plane"></i>
+                <span>Kirim</span>
+            </button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
