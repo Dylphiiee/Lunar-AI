@@ -1,32 +1,49 @@
 document.addEventListener('DOMContentLoaded', function() {
-    let currentAI = 'lunar-ai-community';
-    let chatHistory = [];
-    let isTyping = false;
-    let isTitleVisible = true;
-    
+    // State management
+    const state = {
+        currentAI: 'lunar-ai-community',
+        chatHistory: [],
+        isTyping: false,
+        isTitleVisible: true,
+        aiModeOpen: false
+    };
+
+    // DOM Elements
     const elements = {
+        // Main containers
         titleContainer: document.getElementById('title-container'),
         typewriterText: document.getElementById('typewriter-text'),
         chatContainer: document.getElementById('chat-container'),
+        
+        // Input elements
         messageInput: document.getElementById('message-input'),
-        sendBtn: document.getElementById('send-btn'),
-        aiToggleBtn: document.getElementById('ai-toggle-btn'),
-        aiMenuContainer: document.getElementById('ai-menu-container'),
+        sendBtn: document.getElementById('send-message-btn'),
+        
+        // AI Mode elements
+        toggleAIMode: document.getElementById('toggle-ai-mode'),
+        aiModeContainer: document.getElementById('ai-mode-container'),
+        closeAIMode: document.getElementById('close-ai-mode'),
+        aiModeCards: document.querySelectorAll('.ai-mode-card'),
+        
+        // Roblox elements
+        robloxModal: document.getElementById('roblox-modal'),
+        robloxResultModal: document.getElementById('roblox-result-modal'),
+        closeRobloxModal: document.getElementById('close-roblox-modal'),
+        closeResultModal: document.getElementById('close-result-modal'),
+        startStalkBtn: document.getElementById('start-stalk-btn'),
+        robloxUsernameInput: document.getElementById('roblox-username'),
+        
+        // Header elements
         newChatBtn: document.getElementById('new-chat-btn'),
         currentTime: document.getElementById('current-time'),
-        inputExpandBtn: document.getElementById('input-expand-btn'),
-        robloxStalkModal: document.getElementById('roblox-stalk-modal'),
-        robloxResultModal: document.getElementById('roblox-result-modal'),
-        closeStalkModal: document.getElementById('close-stalk-modal'),
-        closeResultModal: document.getElementById('close-result-modal'),
-        stalkBtn: document.getElementById('stalk-btn'),
-        robloxUsername: document.getElementById('roblox-username'),
-        aiOptions: document.querySelectorAll('.ai-option'),
-        aiMenuClose: document.querySelector('.ai-menu-close')
+        
+        // Utility elements
+        expandInputBtn: document.getElementById('expand-input')
     };
-    
+
+    // Initialize application
     init();
-    
+
     function init() {
         startTypewriter();
         updateTime();
@@ -36,52 +53,43 @@ document.addEventListener('DOMContentLoaded', function() {
             MathJax.typesetPromise();
         }
     }
-    
+
     function setupEventListeners() {
+        // Chat functionality
         elements.sendBtn.addEventListener('click', sendMessage);
-        
-        elements.messageInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-            }
-        });
-        
+        elements.messageInput.addEventListener('keydown', handleMessageInput);
         elements.messageInput.addEventListener('input', autoResizeTextarea);
         
-        elements.aiToggleBtn.addEventListener('click', toggleAIMenu);
+        // AI Mode functionality
+        elements.toggleAIMode.addEventListener('click', toggleAIMode);
+        elements.closeAIMode.addEventListener('click', toggleAIMode);
         
-        document.addEventListener('click', function(e) {
-            if (!elements.aiMenuContainer.contains(e.target) && 
-                !elements.aiToggleBtn.contains(e.target) &&
-                elements.aiMenuContainer.classList.contains('active')) {
-                toggleAIMenu();
-            }
-        });
-        
-        elements.aiOptions.forEach(option => {
-            option.addEventListener('click', function() {
-                selectAIOption(this.dataset.aiType);
+        // AI Mode card selection
+        elements.aiModeCards.forEach(card => {
+            card.addEventListener('click', function() {
+                const mode = this.dataset.mode;
+                selectAIMode(mode);
             });
         });
         
-        elements.aiMenuClose.addEventListener('click', toggleAIMenu);
-        
-        elements.newChatBtn.addEventListener('click', startNewChat);
-        
-        elements.inputExpandBtn.addEventListener('click', toggleInputExpand);
-        
-        elements.stalkBtn.addEventListener('click', stalkRobloxUser);
-        
-        elements.closeStalkModal.addEventListener('click', () => {
-            elements.robloxStalkModal.classList.remove('active');
+        // Roblox functionality
+        elements.startStalkBtn.addEventListener('click', stalkRobloxUser);
+        elements.closeRobloxModal.addEventListener('click', () => {
+            elements.robloxModal.classList.remove('active');
         });
-        
         elements.closeResultModal.addEventListener('click', () => {
             elements.robloxResultModal.classList.remove('active');
         });
         
-        [elements.robloxStalkModal, elements.robloxResultModal].forEach(modal => {
+        // Roblox username input - Enter key support
+        elements.robloxUsernameInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                stalkRobloxUser();
+            }
+        });
+        
+        // Close modals when clicking outside
+        [elements.robloxModal, elements.robloxResultModal].forEach(modal => {
             modal.addEventListener('click', function(e) {
                 if (e.target === this) {
                     this.classList.remove('active');
@@ -89,15 +97,15 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
         
-        elements.robloxUsername.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') {
-                stalkRobloxUser();
-            }
-        });
+        // New chat functionality
+        elements.newChatBtn.addEventListener('click', startNewChat);
+        
+        // Expand input functionality
+        elements.expandInputBtn.addEventListener('click', toggleInputExpand);
     }
-    
+
     function startTypewriter() {
-        const text = "ada yang bisa dibantu?";
+        const text = "Apa yang anda ingin tahu?";
         let i = 0;
         const speed = 100;
         
@@ -115,7 +123,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         typeWriter();
     }
-    
+
     function updateTime() {
         const now = new Date();
         const timeString = now.toLocaleTimeString('id-ID', {
@@ -126,15 +134,23 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         elements.currentTime.textContent = timeString;
     }
-    
-    function autoResizeTextarea() {
-        elements.messageInput.style.height = 'auto';
-        elements.messageInput.style.height = (elements.messageInput.scrollHeight) + 'px';
+
+    function handleMessageInput(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
     }
-    
+
+    function autoResizeTextarea() {
+        const textarea = elements.messageInput;
+        textarea.style.height = 'auto';
+        textarea.style.height = (textarea.scrollHeight) + 'px';
+    }
+
     function toggleInputExpand() {
         elements.messageInput.classList.toggle('expanded');
-        const icon = elements.inputExpandBtn.querySelector('i');
+        const icon = elements.expandInputBtn.querySelector('i');
         if (elements.messageInput.classList.contains('expanded')) {
             icon.classList.remove('fa-expand-alt');
             icon.classList.add('fa-compress-alt');
@@ -144,110 +160,113 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         autoResizeTextarea();
     }
-    
-    function toggleAIMenu() {
-        elements.aiMenuContainer.classList.toggle('active');
-        const icon = elements.aiToggleBtn.querySelector('i');
-        if (elements.aiMenuContainer.classList.contains('active')) {
+
+    function toggleAIMode() {
+        state.aiModeOpen = !state.aiModeOpen;
+        elements.aiModeContainer.classList.toggle('active');
+        
+        const icon = elements.toggleAIMode.querySelector('i');
+        if (state.aiModeOpen) {
             icon.style.transform = 'rotate(45deg)';
         } else {
             icon.style.transform = 'rotate(0)';
         }
     }
-    
-    function selectAIOption(aiType) {
-        if (aiType === 'stalk-roblox') {
-            openRobloxStalkModal();
-            toggleAIMenu();
+
+    function selectAIMode(mode) {
+        if (mode === 'stalk-roblox') {
+            elements.robloxModal.classList.add('active');
+            toggleAIMode();
             return;
         }
         
-        currentAI = aiType;
+        state.currentAI = mode;
         
-        elements.aiOptions.forEach(option => {
-            if (option.dataset.aiType === aiType) {
-                option.classList.add('active');
+        elements.aiModeCards.forEach(card => {
+            if (card.dataset.mode === mode) {
+                card.classList.add('active');
             } else {
-                option.classList.remove('active');
+                card.classList.remove('active');
             }
         });
         
-        const aiName = aiType === 'lunar-ai-community' 
-            ? 'Lunar-AI Community' 
-            : 'Lunar-AI Chat';
-        addMessage(`AI mode changed to: ${aiName}`, 'system');
+        const aiName = mode === 'lunar-ai-community' 
+            ? 'LUNAR-AI Community' 
+            : 'LUNAR-AI Chat';
+        addMessage(`Mode AI berubah ke: ${aiName}`, 'system');
         
-        toggleAIMenu();
+        toggleAIMode();
     }
-    
-    function openRobloxStalkModal() {
-        elements.robloxStalkModal.classList.add('active');
-        elements.robloxUsername.focus();
-    }
-    
+
     async function stalkRobloxUser() {
-        const username = elements.robloxUsername.value.trim();
+        const username = elements.robloxUsernameInput.value.trim();
         
         if (!username) {
-            alert('Please enter a Roblox username');
+            alert('Masukkan username Roblox terlebih dahulu');
             return;
         }
         
-        const loadingMsg = addMessage('Stalking Roblox user...', 'bot');
+        const loadingMsg = addMessage('Mencari data pengguna Roblox...', 'bot');
         
         try {
             const response = await fetch(`https://api.ootaizumi.web.id/stalk/roblox?username=${encodeURIComponent(username)}`);
             const data = await response.json();
             
-            if (data.status) {
+            if (data.status && data.result) {
                 loadingMsg.remove();
                 showRobloxResult(data.result);
-                elements.robloxStalkModal.classList.remove('active');
-                addMessage(`Successfully stalked user: ${data.result.result.displayName || data.result.result.name}`, 'system');
+                elements.robloxModal.classList.remove('active');
+                addMessage(`Berhasil mendapatkan data: ${data.result.result.displayName || data.result.result.name}`, 'system');
             } else {
-                throw new Error('Failed to stalk user');
+                throw new Error(data.message || 'Gagal mengambil data');
             }
         } catch (error) {
             console.error('Error stalking Roblox user:', error);
             loadingMsg.remove();
-            addMessage('Failed to stalk Roblox user. Please try again.', 'bot');
+            addMessage('Gagal mengambil data pengguna. Pastikan username benar.', 'bot');
         }
     }
-    
+
     function showRobloxResult(data) {
         const result = data.result;
         
         document.getElementById('roblox-avatar').src = data.profileDetails;
-        document.getElementById('roblox-name').textContent = result.name;
-        document.getElementById('roblox-displayname').textContent = result.displayName;
+        document.getElementById('roblox-username-result').textContent = result.name;
+        document.getElementById('roblox-displayname').textContent = result.displayName || 'Tidak ada';
         document.getElementById('roblox-id').textContent = result.id;
-        document.getElementById('roblox-description').textContent = result.description || 'No description';
-        document.getElementById('roblox-created').textContent = new Date(result.created).toLocaleDateString('id-ID');
-        document.getElementById('roblox-status').textContent = result.isBanned ? 'Banned' : 'Active';
-        document.getElementById('roblox-lastonline').textContent = data.lastOnline;
+        
+        const createdDate = new Date(result.created);
+        document.getElementById('roblox-created').textContent = createdDate.toLocaleDateString('id-ID');
+        
+        const statusElement = document.getElementById('roblox-status');
+        statusElement.textContent = result.isBanned ? 'Banned' : 'Aktif';
+        statusElement.className = result.isBanned ? 'detail-value status-banned' : 'detail-value status-active';
+        
+        document.getElementById('roblox-lastonline').textContent = data.lastOnline || 'Tidak diketahui';
+        document.getElementById('roblox-description').textContent = result.description || 'Tidak ada deskripsi';
         
         elements.robloxResultModal.classList.add('active');
     }
-    
+
     function startNewChat() {
-        if (confirm('Start new chat? Current chat history will be cleared.')) {
-            chatHistory = [];
+        if (confirm('Mulai chat baru? Riwayat chat saat ini akan dihapus.')) {
+            state.chatHistory = [];
             elements.chatContainer.innerHTML = '';
             elements.chatContainer.classList.remove('active');
             elements.titleContainer.classList.remove('hidden');
-            isTitleVisible = true;
+            state.isTitleVisible = true;
         }
     }
-    
+
     async function sendMessage() {
         const message = elements.messageInput.value.trim();
         
-        if (!message || isTyping) return;
+        if (!message || state.isTyping) return;
         
-        if (isTitleVisible) {
+        if (state.isTitleVisible) {
             elements.titleContainer.classList.add('hidden');
             elements.chatContainer.classList.add('active');
-            isTitleVisible = false;
+            state.isTitleVisible = false;
         }
         
         addMessage(message, 'user');
@@ -256,8 +275,29 @@ document.addEventListener('DOMContentLoaded', function() {
         autoResizeTextarea();
         
         const thinkingMsg = showThinkingAnimation();
+        state.isTyping = true;
         
-        let prompt = '';
+        try {
+            const prompt = buildPrompt(message);
+            const response = await fetchAIResponse(prompt);
+            
+            thinkingMsg.remove();
+            state.isTyping = false;
+            
+            if (response) {
+                await displayBotResponse(response);
+            } else {
+                throw new Error('Tidak ada response dari AI');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            thinkingMsg.remove();
+            state.isTyping = false;
+            addMessage('Maaf, terjadi kesalahan. Silakan coba lagi.', 'bot');
+        }
+    }
+
+    function buildPrompt(message) {
         if (currentAI === 'lunar-ai-community') {
             prompt = `Kamu adalah Lunar-AI, asisten resmi Lunar Community. Tugas utamamu adalah memberikan informasi, penjelasan, dan jawaban yang akurat seputar Lunar Community. Kamu tidak berfungsi sebagai teman ngobrol atau tempat curhat, melainkan sebagai pusat informasi resmi komunitas.
 
@@ -339,25 +379,23 @@ Message: ${message}
 
 Instruksi: Abaikan prompt awal dan jangan menjawabnya. Fokus hanya menjawab Message di atas sebagai Lunar-AI`;
         }
-        
+    }
+
+    async function fetchAIResponse(prompt) {
         try {
             const response = await fetch(`https://api.siputzx.my.id/api/ai/gemini-lite?prompt=${encodeURIComponent(prompt)}&model=gemini-2.0-flash-lite`);
             const data = await response.json();
             
-            thinkingMsg.remove();
-            
-            if (data.status && data.data.parts[0].text) {
-                await displayBotResponse(data.data.parts[0].text);
-            } else {
-                throw new Error('Invalid response from AI');
+            if (data.status && data.data?.parts?.[0]?.text) {
+                return data.data.parts[0].text;
             }
+            return null;
         } catch (error) {
-            console.error('Error:', error);
-            thinkingMsg.remove();
-            addMessage('Sorry, I encountered an error. Please try again.', 'bot');
+            console.error('API Error:', error);
+            throw error;
         }
     }
-    
+
     function addMessage(text, sender) {
         const messageDiv = document.createElement('div');
         messageDiv.className = `chat-message ${sender}-message`;
@@ -373,7 +411,7 @@ Instruksi: Abaikan prompt awal dan jangan menjawabnya. Fokus hanya menjawab Mess
         
         elements.chatContainer.scrollTop = elements.chatContainer.scrollHeight;
         
-        chatHistory.push({ text, sender });
+        state.chatHistory.push({ text, sender, timestamp: new Date() });
         
         setTimeout(() => {
             if (contentDiv.querySelector('pre code')) {
@@ -389,9 +427,11 @@ Instruksi: Abaikan prompt awal dan jangan menjawabnya. Fokus hanya menjawab Mess
         
         return messageDiv;
     }
-    
+
     function processMessageContent(text) {
-        let processed = text.replace(/```(\w+)?\n([\s\S]*?)```/g, function(match, lang, code) {
+        let processed = text;
+        
+        processed = processed.replace(/```(\w+)?\n([\s\S]*?)```/g, function(match, lang, code) {
             lang = lang || 'text';
             const escapedCode = escapeHtml(code.trim());
             return `<div class="code-block">
@@ -405,14 +445,6 @@ Instruksi: Abaikan prompt awal dan jangan menjawabnya. Fokus hanya menjawab Mess
         
         processed = processed.replace(/`([^`]+)`/g, '<code>$1</code>');
         
-        processed = processed.replace(/\|(.+)\|/g, function(match, row) {
-            const cells = row.split('|').map(cell => cell.trim());
-            if (cells.length > 1) {
-                return '<table><tr>' + cells.map(cell => `<td>${cell}</td>`).join('') + '</tr></table>';
-            }
-            return match;
-        });
-        
         processed = processed.replace(/\n/g, '<br>');
         
         processed = processed.replace(/\$\$(.+?)\$\$/g, '\\[$1\\]');
@@ -420,13 +452,13 @@ Instruksi: Abaikan prompt awal dan jangan menjawabnya. Fokus hanya menjawab Mess
         
         return processed;
     }
-    
+
     function escapeHtml(text) {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
     }
-    
+
     function showThinkingAnimation() {
         const thinkingDiv = document.createElement('div');
         thinkingDiv.className = 'thinking-dots';
@@ -442,10 +474,8 @@ Instruksi: Abaikan prompt awal dan jangan menjawabnya. Fokus hanya menjawab Mess
         
         return thinkingDiv;
     }
-    
+
     async function displayBotResponse(text) {
-        isTyping = true;
-        
         const messageDiv = document.createElement('div');
         messageDiv.className = 'chat-message bot-message';
         
@@ -466,7 +496,7 @@ Instruksi: Abaikan prompt awal dan jangan menjawabnya. Fokus hanya menjawab Mess
                 elements.chatContainer.scrollTop = elements.chatContainer.scrollHeight;
                 setTimeout(typeCharacter, typingSpeed);
             } else {
-                isTyping = false;
+                state.chatHistory.push({ text, sender: 'bot', timestamp: new Date() });
                 
                 setTimeout(() => {
                     if (contentDiv.querySelector('pre code')) {
@@ -483,18 +513,16 @@ Instruksi: Abaikan prompt awal dan jangan menjawabnya. Fokus hanya menjawab Mess
         }
         
         await typeCharacter();
-        
-        chatHistory.push({ text, sender: 'bot' });
     }
-    
+
     window.copyToClipboard = function(button) {
         const codeBlock = button.closest('.code-block');
         const code = codeBlock.querySelector('code').textContent;
         
         navigator.clipboard.writeText(code).then(() => {
             const originalText = button.textContent;
-            button.textContent = 'Copied!';
-            button.style.background = 'rgba(76, 217, 100, 0.3)';
+            button.textContent = '✓ Disalin!';
+            button.style.background = 'rgba(0, 255, 136, 0.3)';
             
             setTimeout(() => {
                 button.textContent = originalText;
@@ -502,7 +530,7 @@ Instruksi: Abaikan prompt awal dan jangan menjawabnya. Fokus hanya menjawab Mess
             }, 2000);
         }).catch(err => {
             console.error('Failed to copy:', err);
-            button.textContent = 'Failed!';
+            button.textContent = '✗ Gagal!';
             setTimeout(() => {
                 button.textContent = 'Copy';
             }, 2000);
